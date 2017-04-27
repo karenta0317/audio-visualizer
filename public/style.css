@@ -1,0 +1,17 @@
+#IMG_1 {
+    position:absolute;
+    top:10px;
+    left:10px;
+    width:640px;
+    height:480px;
+    z-index:1;
+}
+#IMG_2 {
+    position:absolute;
+    background: transparent;
+    top:10px;
+    left:10px;
+    width:640px;
+    height:480px;
+    z-index:2;
+}
