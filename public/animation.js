@@ -1,5 +1,8 @@
-var SCREEN_WIDTH = window.innerWidth,
-    SCREEN_HEIGHT = window.innerHeight,
+var express = require('express');
+var app = express();
+var globalData;
+var SCREEN_WIDTH = 640,
+    SCREEN_HEIGHT = 480,
     mousePos = {
         x: 400,
         y: 300
@@ -12,18 +15,22 @@ var SCREEN_WIDTH = window.innerWidth,
     rockets = [],
     MAX_PARTICLES = 400,
     colorCode = 0;
-
+app.get('/trigger', (response, request) => {
+    globalData = response.globalData;
+})
 // init
-(function() {
-    document.getElementById("IMG_2").appendChild(canvas);
+$(document).ready(function() {
+    $('#IMG_2')[0].appendChild(canvas);
     canvas.width = SCREEN_WIDTH;
     canvas.height = SCREEN_HEIGHT;
-    setInterval(launch, 800);
+    if(globalData>0.05){
+        launch();
+    }
     setInterval(loop, 1000 / 50);
-})();
+});
 
 // update mouse position
-document.addEventListnener('mousemove', function(e) {
+$(document).mousemove(function(e) {
     e.preventDefault();
     mousePos = {
         x: e.clientX,
@@ -32,7 +39,7 @@ document.addEventListnener('mousemove', function(e) {
 });
 
 // launch more rockets!!!
-document.addEventListner('mousedown', function(e) {
+$(document).mousedown(function(e) {
     for (var i = 0; i < 5; i++) {
         launchFrom(Math.random() * SCREEN_WIDTH * 2 / 3 + SCREEN_WIDTH / 6);
     }
@@ -57,17 +64,17 @@ function launchFrom(x) {
 
 function loop() {
     // update screen size
-    if (SCREEN_WIDTH != window.innerWidth) {
-        canvas.width = SCREEN_WIDTH = window.innerWidth;
+    if (SCREEN_WIDTH != 640) {
+        canvas.width = SCREEN_WIDTH = 640;
     }
-    if (SCREEN_HEIGHT != window.innerHeight) {
-        canvas.height = SCREEN_HEIGHT = window.innerHeight;
+    if (SCREEN_HEIGHT != 480) {
+        canvas.height = SCREEN_HEIGHT = 480;
     }
 
     // clear canvas
-    context.fillStyle = "rgba(0, 0, 0, 0.05)";
+    context.fillStyle = "rgba(0, 0, 0, 0.0)";
     context.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
+	context.globalCompositeOperation="copy";
     var existingRockets = [];
 
     for (var i = 0; i < rockets.length; i++) {
@@ -240,8 +247,8 @@ Rocket.prototype.render = function(c) {
         r = this.size / 2;
 
     var gradient = c.createRadialGradient(x, y, 0.1, x, y, r);
-    gradient.addColorStop(0.1, "rgba(255, 255, 255 ," + this.alpha + ")");
-    gradient.addColorStop(1, "rgba(0, 0, 0, " + this.alpha + ")");
+    gradient.addColorStop(0.1, "rgba(255, 255, 255 ,0)");
+    gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
 
     c.fillStyle = gradient;
 

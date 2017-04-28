@@ -7,7 +7,7 @@ var server = require('http').Server(app);
 var os = require('os');
 var path = require('path');
 var port = 4000;
-
+var globalData=0;
 var av = require('tessel-av');
 var camera = new av.Camera({
   width: 320,
@@ -22,19 +22,25 @@ app.use(express.static(path.join(__dirname, '/public')));
 app.get('/stream', (request, response) => {
   response.redirect(camera.url);
 });
-
+app.put('/trigger',(request, response) => {
+  response.send(globalData);
+})
 ambient.on('ready', function () {
   ambient.setSoundTrigger(0.05);
  // Get points of light and sound data.
    this.pollingFrequency = 100;
   setInterval( function () {
       ambient.getSoundLevel( function(err, sounddata) {
+        if(sounddata<0.05){
+          globalData=0;
+        }
         if (err) throw err;
         console.log("Sound Level:", sounddata.toFixed(8));
       });
   }, 100); // The readings will happen every .5 seconds
 });
 ambient.on('sound-trigger', function(data){
+  globalData = data;
   console.log("Something happened with sound: ", data);
   if(data < 0.07) {
     tessel.led[0].on();
