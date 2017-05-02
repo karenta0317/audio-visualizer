@@ -1,6 +1,10 @@
-var express = require('express');
-var app = express();
-var globalData;
+var globalData = {data:0};
+var socket = io();
+socket.on('data',function(msg){
+    globalData.data = msg;
+    console.log('enjoy firework!'+'sound leverl:'+globalData.data);
+    launch(globalData.data);
+});
 var SCREEN_WIDTH = 640,
     SCREEN_HEIGHT = 480,
     mousePos = {
@@ -15,45 +19,38 @@ var SCREEN_WIDTH = 640,
     rockets = [],
     MAX_PARTICLES = 400,
     colorCode = 0;
-app.get('/trigger', (response, request) => {
-    globalData = response.globalData;
-})
 // init
 $(document).ready(function() {
     $('#IMG_2')[0].appendChild(canvas);
     canvas.width = SCREEN_WIDTH;
     canvas.height = SCREEN_HEIGHT;
-    if(globalData>0.05){
-        launch();
-    }
+//    console.log("globalData:"+ globalData.data);
+//    if(globalData>0.05){
+//        launch();
+//    }
     setInterval(loop, 1000 / 50);
 });
 
-// update mouse position
-$(document).mousemove(function(e) {
-    e.preventDefault();
-    mousePos = {
-        x: e.clientX,
-        y: e.clientY
-    };
-});
 
 // launch more rockets!!!
-$(document).mousedown(function(e) {
-    for (var i = 0; i < 5; i++) {
-        launchFrom(Math.random() * SCREEN_WIDTH * 2 / 3 + SCREEN_WIDTH / 6);
-    }
-});
 
-function launch() {
-    launchFrom(mousePos.x);
-}
 
-function launchFrom(x) {
+
+function launch(data) {
     if (rockets.length < 10) {
-        var rocket = new Rocket(x);
-        rocket.explosionColor = Math.floor(Math.random() * 360 / 10) * 10;
-        rocket.vel.y = Math.random() * -3 - 4;
+        var rocket = new Rocket();
+        var color = 0;
+        if(data < 0.07) {
+            color = 0;
+        } else if(data < 0.09) {
+            color = 60;
+        } else if(data < 0.11) {
+            color = 120;
+        } else {
+            color = 240;
+        }
+        rocket.explosionColor = color;
+        rocket.vel.y = Math.random() * -3 - 10;
         rocket.vel.x = Math.random() * 6 - 3;
         rocket.size = 8;
         rocket.shrink = 0.999;
@@ -82,19 +79,7 @@ function loop() {
         rockets[i].update();
         rockets[i].render(context);
 
-        // calculate distance with Pythagoras
-        var distance = Math.sqrt(Math.pow(mousePos.x - rockets[i].pos.x, 2) + Math.pow(mousePos.y - rockets[i].pos.y, 2));
-
-        // random chance of 1% if rockets is above the middle
-        var randomChance = rockets[i].pos.y < (SCREEN_HEIGHT * 2 / 3) ? (Math.random() * 100 <= 1) : false;
-
-/* Explosion rules
-             - 80% of screen
-            - going down
-            - close to the mouse
-            - 1% chance of random explosion
-        */
-        if (rockets[i].pos.y < SCREEN_HEIGHT / 5 || rockets[i].vel.y >= 0 || distance < 50 || randomChance) {
+        if (i === 0) {
             rockets[i].explode();
         } else {
             existingRockets.push(rockets[i]);
@@ -196,10 +181,13 @@ Particle.prototype.exists = function() {
     return this.alpha >= 0.1 && this.size >= 1;
 };
 
-function Rocket(x) {
+function Rocket() {
+    let token = (Math.random() > 0.5)?0:1;
+    let plus = (Math.random() > 0.5)?-10:10;
     Particle.apply(this, [{
-        x: x,
-        y: SCREEN_HEIGHT}]);
+        x: (560 - 480*token)+Math.random()*plus,
+        y: Math.floor(SCREEN_HEIGHT*Math.random())
+    }]);
 
     this.explosionColor = 0;
 }

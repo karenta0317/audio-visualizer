@@ -1,16 +1,25 @@
+body{
+    background-image: url(background.jpg);
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
 #IMG_1 {
     position:absolute;
-    top:10px;
-    left:10px;
+    display: block;
+    margin-left: 300px;
+    margin-top: 60px;
+    margin-right: auto;
     width:640px;
     height:480px;
     z-index:1;
 }
 #IMG_2 {
     position:absolute;
+    display: block;
     background-color: transparent;
-    top:10px;
-    left:10px;
+    margin-top: 60px;
+    margin-left: 300px;
+    margin-right: auto;
     width:640px;
     height:480px;
     z-index:2;

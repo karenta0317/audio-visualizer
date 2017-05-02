@@ -4,6 +4,7 @@ var ambient = ambientlib.use(tessel.port['A']);
 var express = require('express');
 var app = express();
 var server = require('http').Server(app);
+var io = require('socket.io')(server);
 var os = require('os');
 var path = require('path');
 var port = 4000;
@@ -18,6 +19,8 @@ server.listen(port, function () {
   console.log(`http://${os.hostname()}.local:${port}`);
 });
 
+
+
 app.use(express.static(path.join(__dirname, '/public')));
 app.get('/stream', (request, response) => {
   response.redirect(camera.url);
@@ -26,7 +29,7 @@ app.put('/trigger',(request, response) => {
   response.send(globalData);
 })
 ambient.on('ready', function () {
-  ambient.setSoundTrigger(0.05);
+  ambient.setSoundTrigger(0.06);
  // Get points of light and sound data.
    this.pollingFrequency = 100;
   setInterval( function () {
@@ -35,13 +38,18 @@ ambient.on('ready', function () {
           globalData=0;
         }
         if (err) throw err;
-        console.log("Sound Level:", sounddata.toFixed(8));
+//        console.log("Sound Level:", sounddata.toFixed(8));
       });
   }, 100); // The readings will happen every .5 seconds
 });
+
 ambient.on('sound-trigger', function(data){
   globalData = data;
-  console.log("Something happened with sound: ", data);
+  if(globalData > 0.06){
+    console.log("data: "+ globalData);
+    io.emit('data',globalData);
+  }
+  console.log("Something happened with sound: ", globalData);
   if(data < 0.07) {
     tessel.led[0].on();
      setTimeout(function () {
