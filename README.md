@@ -20,8 +20,8 @@ npm install
 ```
 ### Setup
 
--Make sure the tessel-ambient module is plugged into **part A** of the Tessel board.
--Make sure your Tessel and computer are connected to **the same Wifi network**. For details about the setup of the camera, please check [this website](http://tessel.github.io/t2-start/modules/camera.html).
+- Make sure the tessel-ambient module is plugged into **part A** of the Tessel board.
+- Make sure your Tessel and computer are connected to **the same Wifi network**. For details about the setup of the camera, please check [this website](http://tessel.github.io/t2-start/modules/camera.html).
 
 ### Build
 
@@ -29,6 +29,7 @@ npm install
 t2 run index.js
 ```
 
-Open your web browser and go to `http://{tessel board name}.local:4000`
+Open your web browser and go to `http://{tessel board name}.local:4000`.
+
 Play your favorite music and enjoy 
 
