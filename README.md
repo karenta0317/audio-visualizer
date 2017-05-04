@@ -1,6 +1,6 @@
-＃ES Lab Project2 Audio Visulizer
+#ES Lab Project2 Audio Visulizer
 
-＃＃Introduction
+##Introduction
 Simple audio visualizer that detects the ambient sound level and then triggers built-in LED lights on the Tessel2 board. There are four sound levels and each triggers one LED light. This project also features real-time special camera lens rendering the video stream with fireworks synchronous with LED lights. 
 
 ##Get Started
